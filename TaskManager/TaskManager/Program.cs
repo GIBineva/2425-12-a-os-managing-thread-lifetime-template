@@ -1,53 +1,45 @@
-﻿namespace TaskManager;
-
-class Process
-{
-    public int PID { get; set; }
-    public string Name { get; set; }
-    public string Status { get; set; }
-    public Thread ProcessThread { get; set; }
-    
-    public Process()
-    {
-        PID = new Random().Next(100000);
-        Name = GenerateName();
-        Status = "Running";
-    }
-
-    private string GenerateName()
-    {
-        int randomLength = new Random().Next(5,10);
-        char[] chars = new char[] {'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'};
-
-        string randomName = "";
-        
-        for (int i = 0; i < randomLength; i++)
-        {
-            randomName += chars[new Random().Next(chars.Length)];
-        }
-        
-        return randomName + ".exe";
-    }
-}
+﻿using System;
 
 class Program
 {
-    static void Main(string[] args)
+    static void Main()
     {
-        List<Process> processes = new List<Process>();
-
-        for (int i = 0; i < new Random().Next(100); i++)
+        while (true)
         {
-            processes.Add(new Process());
-        }
+            Console.WriteLine("\nTask Manager:");
+            Console.WriteLine("1. Start a new task");
+            Console.WriteLine("2. List running tasks");
+            Console.WriteLine("3. Resume/Suspend task by PID");
+            Console.WriteLine("4. Exit");
+            Console.Write("Select an option: ");
 
-        Console.WriteLine("\tName\t|\tPID\t|\tStatus");
-
-        foreach (Process process in processes)
-        {
-            Console.WriteLine($"{process.Name}\t|\t{process.PID}\t|\t{process.Status}");
+            string choice = Console.ReadLine();
+            switch (choice)
+            {
+                case "1":
+                    Processes.StartNewTask();
+                    break;
+                case "2":
+                    Processes.ListRunningTasks();
+                    break;
+                case "3":
+                    Console.Write("Enter PID to Resume/Suspend: ");
+                    if (int.TryParse(Console.ReadLine(), out int pid))
+                    {
+                        Processes.ToggleTask(pid);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Invalid PID!");
+                    }
+                    break;
+                case "4":
+                    Processes.TerminateAllTasks();
+                    return;
+                default:
+                    Console.WriteLine("Invalid option!");
+                    break;
+            }
         }
-        
-        Console.ReadKey();
     }
 }
